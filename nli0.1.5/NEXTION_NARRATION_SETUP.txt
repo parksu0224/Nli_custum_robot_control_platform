@@ -1,0 +1,17 @@
+Nextion narration display additions
+
+Required component: g0
+
+For every TTS utterance, immediately before audio playback C++ receives show_narration(text) and sends:
+1. g0.en=1
+2. g0.txt="<robot narration>"
+
+After the complete utterance finishes, Python calls hide_narration and C++ sends:
+3. g0.en=0
+
+So g0 is visible/enabled only while the robot is speaking.
+
+Startup behavior:
+- When the continuous STT loop starts for the first time, Python speaks "Activated" once.
+- It waits for the startup TTS to finish before launching the first arecord process, preventing the microphone from recording the robot's own startup cue.
+- "Activated" is shown on g0 during playback and g0.en is set back to 0 after the cue finishes.

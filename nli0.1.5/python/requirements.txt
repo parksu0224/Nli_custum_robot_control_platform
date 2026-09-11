@@ -1,0 +1,8 @@
+SpeechRecognition
+soundfile>=0.13.1
+numpy
+requests
+gTTS
+openpyxl>=3.1.5
+onnxruntime
+opencv-python-headless

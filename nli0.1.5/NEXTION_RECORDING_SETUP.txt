@@ -1,0 +1,11 @@
+Nextion Recording Status Display Setup
+======================================
+
+1. Keep using t0 as the current log component.
+2. Add one Text component to the same page and set its objname to t1.
+3. Set the position, size, font, and color of t1 as desired.
+4. The txt value may be left blank. C++ sets it to REC.
+5. At program startup, t1 is hidden and is displayed only while arecord is recording.
+
+Signal flow:
+Python stt.py -> Bridge.call("set_recording_state") -> sketch.ino -> Nextion t1

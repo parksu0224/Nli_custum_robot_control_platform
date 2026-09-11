@@ -1,0 +1,75 @@
+NEXTION TCP IP SETUP
+====================
+
+Purpose
+-------
+Python no longer uses a hard-coded ESP_IP from config.py.
+
+TCP destination path:
+
+Nextion setting.tcp_ip.txt
+    -> UART: get setting.tcp_ip.txt
+Arduino UNO Q C++
+    -> validates and caches dotted IPv4 text
+Bridge RPC get_tcp_ip
+    -> Python tcp_client.py
+TCP connection to ESP/module
+
+
+Required Nextion component
+--------------------------
+Page:
+
+    setting
+
+Component:
+
+    objname = tcp_ip
+    type    = Text
+    vscope  = global
+    txt_maxl >= 15
+
+Enter the IPv4 address directly as text, for example:
+
+    172.30.1.6
+
+C++ queries exactly:
+
+    get setting.tcp_ip.txt
+
+The expected Nextion response is a String Data packet:
+
+    0x70 + ASCII text + FF FF FF
+
+
+Runtime behavior
+----------------
+1. C++ waits for Nextion during setup.
+2. C++ reads setting.tcp_ip.txt over Serial1.
+3. C++ validates the A.B.C.D text and caches it.
+4. Python calls the get_tcp_ip Bridge RPC.
+5. C++ returns its cached dotted IPv4 string.
+6. tcp_client.py uses that address for the TCP connection.
+7. On reconnect Python asks C++ for the cached address again.
+8. If the startup read failed, get_tcp_ip retries the Nextion read.
+
+config.py contains:
+
+    ESP_IP = None
+
+There is no fixed TCP destination IP in Python.
+
+
+Example
+-------
+Nextion:
+
+    setting.tcp_ip.txt = "172.30.1.6"
+
+C++ cache:
+
+    172.30.1.6
+
+Python:
+
+    chat_client.host == "172.30.1.6"

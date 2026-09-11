@@ -1,0 +1,10 @@
+nli0.1.5/secrets/*
+!nli0.1.5/secrets/README.txt
+.env
+.env.*
+__pycache__/
+*.pyc
+.venv/
+venv/
+nli0.1.5/deletplease.txt
+nli0.1.5/secrets/README.txt

@@ -1,0 +1,96 @@
+NLI0.1.3 - Nextion Face Control Setup
+======================================
+
+This project sends Nextion commands from Arduino UNO Q C++ through Serial1.
+
+Required Nextion variables
+--------------------------
+face_exp
+under_ani
+forehead_ani
+l_eye_x_ani
+r_eye_x_ani
+l_eye_y_ani
+r_eye_y_ani
+l_eye_r_ani
+r_eye_r_ani
+mouth_ani
+mouth_h
+mouth_dir
+
+Recommended: set these variables to vscope=global when they must be controlled while another page is active.
+
+Preset face_exp values
+----------------------
+0  NORMAL
+1  SMILE
+2  ANGRY
+3  THINK
+4  VERY ANGRY
+5  DIZZY
+99 MANUAL
+
+Python NLI partition ④ output commands
+--------------------------------------
+NORMAL
+SMILE
+ANGRY
+THINK
+VERY_ANGRY
+DIZZY
+
+Manual format
+-------------
+MANUAL:LXn,RXn,LYn,RYn,LRn,RRn,Un,Fn
+
+LX: left pupil X     0=center, 1=right, 2=left
+RX: right pupil X    0=center, 1=right, 2=left
+LY: left pupil Y     0=center, 1=down, 2=up
+RY: right pupil Y    0=center, 1=down, 2=up
+LR: left pupil size  0=normal, 1=large, 2=small
+RR: right pupil size 0=normal, 1=large, 2=small
+U : under eye        0=default, 1=raised
+F : forehead         0=default, 1=angry
+
+C++ always sends face_exp.val=99 BEFORE the detailed manual values.
+
+Example:
+MANUAL:LX0,RX0,LY0,RY0,LR1,RR1,U0,F0
+
+TTS mouth animation
+-------------------
+C++ sends:
+  mouth_h.val=10
+  mouth_dir.val=1
+  mouth_ani.val=1
+when actual aplay playback begins.
+
+When playback ends C++ sends:
+  mouth_ani.val=0
+  mouth_h.val=10
+  mouth_dir.val=1
+
+The Nextion Timer Event must contain the mouth animation logic below BEFORE the mouth draw code:
+
+if(mouth_ani.val==1)
+{
+  if(mouth_dir.val==1)
+  {
+    mouth_h.val=mouth_h.val+1
+    if(mouth_h.val>=20)
+    {
+      mouth_h.val=20
+      mouth_dir.val=0
+    }
+  }
+
+  if(mouth_dir.val==0)
+  {
+    mouth_h.val=mouth_h.val-1
+    if(mouth_h.val<=10)
+    {
+      mouth_h.val=10
+      mouth_dir.val=1
+    }
+  }
+}

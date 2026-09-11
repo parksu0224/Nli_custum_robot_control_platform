@@ -1,0 +1,54 @@
+File Roles
+
+main.py
+- Overall initialization
+- Register Bridge functions
+- Start TCP/STT/Hugging Face worker threads
+- Run App.run
+
+config.py
+- Hugging Face model/token/system message/RAG/hardware settings
+
+state.py
+- Global state shared by multiple modules
+- Queue, Lock, latest R code, module registration information
+
+nli_protocol.py
+- Parse/generate [①|②|③|④|⑤|⑥] codes
+
+module_handler.py
+- Process I/R received from C++
+- Save latest R
+- Insert external LLM requests into the queue
+- Register receive_module_info Bridge
+
+stt.py
+- arecord recording
+- RMS decision
+- Google STT
+- Insert the user's voice into the latest R code
+
+tts.py
+- Generate gTTS MP3
+- Convert to WAV and play with aplay
+
+hf_client.py
+- Call Hugging Face Inference Providers API
+- Combine system message, recent conversation memory, and RAG data
+- Parse NLI response, deliver commands to C++, and speak narration with TTS
+
+rag.py
+- Load CSV/XLSX/TXT files in the knowledge folder
+- Search rows related to the question
+- Insert related data into the system message
+
+create_knowledge_table.py
+- Generate an example module_knowledge.xlsx table
+
+tcp_client.py
+- ESP TCP connection/reconnection
+- ESP send/receive
+- Register send_to_esp Bridge
+
+bridge_io.py
+- Python -> C++ Bridge.call function

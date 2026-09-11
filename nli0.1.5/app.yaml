@@ -1,0 +1,5 @@
+name: NLI0.1.5
+description: Hugging Face API-based NLI core with I/R processing, normal conversation, local-table RAG, and serial debug relay
+ports: []
+bricks: []
+icon: 🐎
