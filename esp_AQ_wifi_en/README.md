@@ -1,35 +1,35 @@
-# ESP8266 Wi-Fi 통신 모듈
+# ESP8266 Wi-Fi Communication Module
 
-[전체 시스템 안내](../README.md)
+[System overview](../README.md)
 
-`esp_AQ_wifi_en.ino`는 ESP8266 / ESP-12F용 TCP 서버입니다. UNO Q가 클라이언트로 접속하면 ESP 시리얼 입력을 전달하고, UNO Q에서 받은 메시지를 시리얼 모니터에 출력합니다. 모터·센서 동작을 수행하는 완성된 제어 코드는 포함하지 않습니다.
+`esp_AQ_wifi_en.ino` implements a TCP server for ESP8266 / ESP-12F. After UNO Q connects as a client, the sketch forwards ESP serial input to UNO Q and prints incoming messages to Serial Monitor. It does not include complete motor or sensor control logic.
 
-## 업로드
+## Upload and configure
 
-1. Arduino IDE에 ESP8266 보드 지원을 준비합니다.
-2. `esp_AQ_wifi_en.ino`를 엽니다. 폴더와 스케치의 이름을 유지하세요.
-3. `WIFI_SSID`와 `WIFI_PASSWORD`의 예시 값을 실제 접속 정보로 변경합니다. 실제 비밀번호가 있는 코드는 커밋하지 마세요.
-4. 사용하는 ESP8266 보드와 포트를 선택하고 업로드합니다. 보드별 업로드 모드와 전원 연결은 해당 보드 규격을 따릅니다.
-5. 시리얼 모니터를 **115200 baud**, 줄 끝을 **Newline**으로 설정합니다.
-6. `[WiFi] Connection successful`과 `[WiFi] ESP IP:`를 확인합니다.
-7. Nextion의 `setting.tcp_ip.txt`에 이 ESP IP를 넣고 UNO Q 앱을 실행합니다.
+1. Prepare Arduino IDE with ESP8266 board support.
+2. Open `esp_AQ_wifi_en.ino`. Preserve the matching directory and sketch names.
+3. Replace the `WIFI_SSID` and `WIFI_PASSWORD` placeholders with your local settings. Do not commit actual credentials.
+4. Select your ESP8266 board and port, then upload. Follow your board requirements for power and upload mode.
+5. Open Serial Monitor at **115200 baud** with **Newline** selected.
+6. Check for `[WiFi] Connection successful` and `[WiFi] ESP IP:`.
+7. Enter that ESP IP in Nextion `setting.tcp_ip.txt`, then start the UNO Q application.
 
-현재 `ESP8266WiFi.h`를 사용합니다. ESP32 지원과 빌드는 검증하지 않았으며, 보드 종류만 바꿔서 사용할 수 있다고 가정하면 안 됩니다.
+The sketch uses `ESP8266WiFi.h`. ESP32 support and builds have not been verified; do not assume changing the board selection alone is sufficient.
 
-## 통신 규칙과 테스트
+## Protocol and communication test
 
-- 서버 포트는 `SERVER_PORT = 5000`입니다. UNO Q의 `ESP_PORT`와 일치해야 합니다.
-- 현재 하나의 활성 UNO Q 클라이언트를 처리합니다.
-- 메시지는 줄바꿈으로 구분하며 `CR` 문자는 무시합니다. 한 줄의 입력 버퍼는 최대 500자입니다.
-- 연결 후 `[CONNECT] UNO Q connected:`가 출력됩니다.
-- ESP 시리얼에서 `Hello`를 전송하면 `[ESP -> UNO Q]` 로그가 출력됩니다. UNO Q가 메시지를 보내면 `[UNO Q]` 로그가 출력됩니다.
+- The server uses `SERVER_PORT = 5000`, matching UNO Q `ESP_PORT`.
+- The implementation handles one active UNO Q client.
+- Messages are newline-delimited; carriage returns are ignored. Each line buffer accepts up to 500 characters.
+- A successful connection prints `[CONNECT] UNO Q connected:`.
+- Sending `Hello` from ESP Serial Monitor produces an `[ESP -> UNO Q]` log. Incoming UNO Q messages produce `[UNO Q]` logs.
 
-ESP와 UNO Q 사이에 TCP 접속이 가능한 네트워크가 필요합니다. 처음 설치할 때는 같은 로컬 네트워크를 사용하고 무선 클라이언트 격리 설정을 확인하세요.
+ESP and UNO Q must be able to reach each other over TCP. For initial setup, use the same local network and check wireless client isolation settings.
 
-## 실제 모듈로 확장하기
+## Extending this into a device module
 
-현재 시리얼 입력을 센서 상태·등록 메시지로 바꾸고, 수신 메시지를 해석해 액추에이터를 제어하는 부분을 추가할 수 있습니다. NLI의 `I` 등록, `R` 보고, `O` 명령 형식은 [NLI 설명](../nli0.1.5/README.md)을 참고하세요. TCP 수신만으로 모터가 자동 동작하는 구조는 아닙니다.
+Replace serial input with sensor reports or registration messages, and add handlers that interpret received commands and drive your hardware. See the [NLI guide](../nli0.1.5/README.md) for `I` registration, `R` reporting, and `O` command formats. Receiving TCP data does not automatically operate an actuator.
 
-## 연결되지 않을 때
+## Connection troubleshooting
 
-Wi-Fi 이름과 비밀번호, 출력된 ESP IP, Nextion IP 입력값, 포트 5000을 확인하세요. ESP IP가 바뀌었다면 Nextion 값을 수정하고 UNO Q 앱을 재시작합니다.
+Check Wi-Fi credentials, the ESP IP printed in Serial Monitor, the Nextion IP value, and port 5000. If the ESP IP changes, update Nextion and restart the UNO Q application.
