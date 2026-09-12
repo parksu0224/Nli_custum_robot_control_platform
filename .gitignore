@@ -7,4 +7,4 @@ __pycache__/
 .venv/
 venv/
 nli0.1.5/deletplease.txt
-nli0.1.5/secrets/README.txt
+!nli0.1.5/secrets/hf_token.txt
